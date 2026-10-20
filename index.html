@@ -1,0 +1,433 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Місія Руді 2: середовище й моделі</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Rubik:wght@500;600;700&display=swap">
+<style>
+/* Layout: sticky lesson bar with five phases, then one card per phase (середовище, модель, об'єкт, класифікація, підсумок), teacher plan collapsed on top */
+:root{
+  --bg:#F3F6FC; --surface:#FFFFFF; --fg:#14213D; --muted:#55627D; --line:#D6DEEE;
+  --blue:#1F5FC9; --on-blue:#FFFFFF; --soft:#E6EEFC; --orange:#F5A02A; --on-orange:#2A1A00; --orange-soft:#FDEFD7;
+  --good:#1E8A4C; --good-soft:#DFF3E7; --bad:#C2362B; --bad-soft:#FBE4E1; --cell:#EEF3FC; --cell2:#E3EBF9;
+  --f-display:'Rubik',system-ui,sans-serif; --f-body:'Nunito',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1626; --surface:#18223A; --fg:#E8EEFB; --muted:#9DABC8; --line:#2B3858;
+  --blue:#6B9BFF; --on-blue:#0B1430; --soft:#1F2D52; --orange:#F5A02A; --on-orange:#2A1A00; --orange-soft:#3A2A10;
+  --good:#5BD08B; --good-soft:#163A28; --bad:#FF7A6E; --bad-soft:#4A1F1B; --cell:#1B2744; --cell2:#223153;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1626; --surface:#18223A; --fg:#E8EEFB; --muted:#9DABC8; --line:#2B3858;
+  --blue:#6B9BFF; --on-blue:#0B1430; --soft:#1F2D52; --orange:#F5A02A; --on-orange:#2A1A00; --orange-soft:#3A2A10;
+  --good:#5BD08B; --good-soft:#163A28; --bad:#FF7A6E; --bad-soft:#4A1F1B; --cell:#1B2744; --cell2:#223153;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h2{font-size:1.5rem} h3{font-size:1.1rem}
+p{margin:0}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0;border-bottom:2px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.bar{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.brand{font-family:var(--f-display);font-weight:600;font-size:1rem}
+.brand small{display:block;font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.8rem}
+nav.steps{display:flex;flex-wrap:wrap;gap:6px}
+nav.steps a{font-size:.85rem;font-weight:700;text-decoration:none;color:var(--fg);background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums}
+nav.steps a.done{background:var(--good-soft);border-color:var(--good)}
+nav.steps a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.hero{display:grid;grid-template-columns:1fr;gap:10px;padding-top:12px}
+.hero h1{font-size:clamp(1.7rem,5vw,2.4rem)}
+.hero p{color:var(--muted);max-width:62ch}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:90px}
+.kicker{font-family:var(--f-display);font-weight:600;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.lead{color:var(--muted)}
+.say{background:var(--soft);border-radius:10px;padding:12px 14px}
+.say b{font-family:var(--f-display)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:760px){.two{grid-template-columns:minmax(0,1fr)}}
+.btn{font:inherit;font-weight:700;border:2px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:8px 14px;cursor:pointer;min-height:44px}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
+.btn.warm{background:var(--orange);border-color:var(--orange);color:var(--on-orange)}
+.btn.sm{min-height:36px;padding:4px 10px;font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.msg{font-weight:700;min-height:1.4em}
+.msg.good{color:var(--good)} .msg.bad{color:var(--bad)} .msg.info{color:var(--muted)}
+select,input[type=text]{font:inherit;border:2px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:6px 8px;min-height:40px;max-width:100%}
+.board{width:100%;height:auto;display:block;border:2px solid var(--line);border-radius:10px;background:var(--cell)}
+.board.hl{outline:4px solid var(--orange)}
+.palette,.script{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:10px;min-height:56px}
+.script{background:var(--bg);align-content:flex-start}
+.script.hl,.palette.hl{outline:4px solid var(--orange)}
+.chip{font:inherit;font-weight:700;border:2px solid var(--blue);background:var(--soft);color:var(--fg);border-radius:8px;padding:4px 12px;min-height:40px;cursor:pointer}
+.chip.on{background:var(--blue);color:var(--on-blue)}
+.chip.ok{border-color:var(--good);background:var(--good-soft);color:var(--fg)}
+.chip.no{border-color:var(--bad);background:var(--bad-soft);color:var(--fg)}
+.runrow.hl{outline:4px solid var(--orange);border-radius:10px;padding:4px}
+.legend{display:flex;flex-wrap:wrap;gap:6px}
+.legend button{font:inherit;font-size:.85rem;font-weight:700;border:2px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:3px 10px;cursor:pointer}
+.legend button.on{border-color:var(--orange);background:var(--orange-soft)}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font-family:var(--f-display);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.scroll{overflow-x:auto}
+.swatch{width:40px;height:40px;border-radius:10px;border:3px solid var(--line);cursor:pointer;padding:0}
+.swatch.on{border-color:var(--fg)}
+.ctl{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center}
+.ctl label{font-weight:700}
+.qs{display:flex;flex-direction:column;gap:14px}
+.q{display:flex;flex-direction:column;gap:8px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts button{font:inherit;text-align:left;border:2px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:8px 12px;cursor:pointer;min-height:44px}
+.opts button.pick{border-color:var(--blue);background:var(--soft)}
+.opts button.ok{border-color:var(--good);background:var(--good-soft)}
+.opts button.no{border-color:var(--bad);background:var(--bad-soft)}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.item{border:2px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.item.ok{border-color:var(--good)} .item.no{border-color:var(--bad)}
+.item b{font-family:var(--f-display)}
+.opt4{display:flex;flex-wrap:wrap;gap:6px}
+details.plan{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 18px}
+details.plan summary{cursor:pointer;font-family:var(--f-display);font-weight:600}
+.big{font-family:var(--f-display);font-weight:700;font-size:2.2rem;color:var(--blue)}
+textarea{font:.9rem/1.5 ui-monospace,Menlo,Consolas,monospace;width:100%;min-height:230px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);padding:10px;resize:vertical}
+.moods{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.mood{font:inherit;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;border:2px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;padding:8px;cursor:pointer;min-height:44px}
+.mood svg{width:96px;height:96px}
+.mood.on{border-color:var(--orange);background:var(--orange-soft)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top"><div class="bar">
+  <div class="brand">Місія Руді 2<small>Інформатика, 5 клас · 45 хвилин</small></div>
+  <nav class="steps" id="steps" aria-label="Етапи уроку">
+    <a href="#s1" data-k="env">1 Середовище</a><a href="#s2" data-k="model">2 Модель</a><a href="#s3" data-k="obj">3 Об'єкт</a><a href="#s4" data-k="sort">4 Терміни</a><a href="#s5" data-k="quiz">5 Підсумок</a>
+  </nav>
+</div></header>
+
+<div class="wrap">
+  <section class="hero">
+    <p class="kicker">Урок · Середовище виконання алгоритмів. Моделі та об'єкти</p>
+    <h1>Руді потрапив у нове місце. Допоможи йому в ньому розібратися</h1>
+    <p>Спочатку дізнаємось, де саме виконавець виконує алгоритм. Потім навчимось описувати речі моделлю та властивостями. Наприкінці отримаєш текст результату, скопіюєш його або зробиш скріншот і покажеш учителю.</p>
+  </section>
+
+  <details class="plan"><summary>Для вчителя: хід уроку на 45 хвилин</summary>
+    <div class="scroll"><table>
+      <tr><th>Хв</th><th>Етап</th><th>Що відбувається</th></tr>
+      <tr><td>0–3</td><td>Розминка</td><td>«Який у тебе настрій?»: учні обирають Руді. Настрій як приклад властивості. Коротко повторити виконавця й систему команд.</td></tr>
+      <tr><td>3–13</td><td>1 Середовище</td><td>Частини середовища (відповідність) і складання алгоритму для Руді на полі.</td></tr>
+      <tr><td>13–23</td><td>2 Модель</td><td>Модель залежить від мети. Обираємо суттєві властивості для двох цілей.</td></tr>
+      <tr><td>23–35</td><td>3 Об'єкт</td><td>Об'єкт Руді, його властивості та значення. Змінюємо властивості в «інспекторі».</td></tr>
+      <tr><td>35–41</td><td>4 Терміни</td><td>Розрізняємо об'єкт, властивість, значення, дію.</td></tr>
+      <tr><td>41–45</td><td>5 Підсумок</td><td>Чотири запитання, текст результату. Учень копіює його або робить скріншот.</td></tr>
+    </table></div>
+    <p class="lead" style="margin-top:10px">Сторінка нічого не надсилає. Учень сам передає вам скопійований текст або скріншот. Назви частин середовища й приклади узгоджені з §20 підручника; щодо нових параграфів звіртеся з вашим підручником.</p>
+  </details>
+
+  <!-- 0 -->
+  <section class="card" id="s0">
+    <p class="kicker">Розминка · 3 хв</p>
+    <h2>Який у тебе сьогодні настрій?</h2>
+    <p class="lead">Руді теж буває в різному настрої. Обери того Руді, який найбільше схожий на тебе.</p>
+    <div class="moods" id="moods"></div>
+    <p class="say" id="moodMsg" aria-live="polite">Натисни на одного з Руді.</p>
+    <p class="lead">Настрій — це теж властивість. Назва властивості «настрій», а значення може бути «радий», «спокійний» чи «втомлений».</p>
+  </section>
+
+  <!-- 1 -->
+  <section class="card" id="s1">
+    <p class="kicker">Етап 1 · приблизно 10 хв</p>
+    <h2>Середовище виконання алгоритмів</h2>
+    <div class="say"><b>Запам'ятай.</b> Виконавець працює в певному середовищі. Середовище — це місце, де виконавець діє, разом з усім, що потрібно, щоб записати алгоритм і запустити його виконання.</div>
+    <h3>Відшукай частини середовища</h3>
+    <p class="lead">Натискай на назви під малюнком: відповідна частина підсвітиться.</p>
+    <div class="two">
+      <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+        <svg class="board" id="b1" viewBox="0 0 448 320" role="img" aria-label="Поле з Руді та батарейками"></svg>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+        <b>Система команд</b>
+        <div class="palette" id="pal"></div>
+        <b>Область запису алгоритму</b>
+        <div class="script" id="scr" aria-live="polite"></div>
+        <div class="row runrow" id="runrow">
+          <button class="btn primary" id="run">Пуск</button>
+          <button class="btn" id="undo">Прибрати останню</button>
+          <button class="btn" id="clr">Очистити</button>
+        </div>
+        <p class="msg info" id="g1msg">Збери всі 3 батарейки. Руді стартує в лівому нижньому куті.</p>
+      </div>
+    </div>
+    <h3>З'єднай опис і частину середовища</h3>
+    <div class="qs" id="match"></div>
+    <div class="row"><button class="btn warm" id="matchChk">Перевірити</button><span class="msg" id="matchMsg"></span></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="card" id="s2">
+    <p class="kicker">Етап 2 · приблизно 10 хв</p>
+    <h2>Створюємо моделі</h2>
+    <div class="say"><b>Модель</b> — це спрощений образ предмета або явища. У ній залишають лише властивості, які потрібні для мети. Одну й ту саму річ описують по-різному, якщо мета інша.</div>
+    <p>Руді допомагає в школі. Обери, які властивості кабінету потрібні для кожної моделі. Натисни на ті, що суттєві.</p>
+    <div id="models" style="display:flex;flex-direction:column;gap:18px"></div>
+    <div class="row"><button class="btn warm" id="modelChk">Перевірити</button><span class="msg" id="modelMsg"></span></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="card" id="s3">
+    <p class="kicker">Етап 3 · приблизно 12 хв</p>
+    <h2>Об'єкти та їхні властивості</h2>
+    <div class="say"><b>Об'єкт</b> — це те, що ми розглядаємо: Руді, поле, батарейка. Кожен об'єкт має <b>властивості</b>. Властивість має <b>назву</b> (колір) і <b>значення</b> (оранжевий). Над об'єктом виконують <b>дії</b>, які можуть змінювати значення властивостей.</div>
+    <p>У середовищі виконання алгоритмів об'єкти теж мають властивості. Налаштуй Руді так, щоб значення збіглися з метою.</p>
+    <div class="two">
+      <svg class="board" id="b3" viewBox="0 0 448 320" role="img" aria-label="Поле з Руді"></svg>
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+        <b>Інспектор об'єкта «Руді»</b>
+        <div class="ctl">
+          <label for="px">Положення x</label><select id="px"></select>
+          <label for="py">Положення y</label><select id="py"></select>
+          <label for="pd">Напрям</label><select id="pd"><option value="U">вгору</option><option value="R">праворуч</option><option value="D">вниз</option><option value="L">ліворуч</option></select>
+          <label>Колір</label><div class="row" id="pc"></div>
+          <label>Розмір</label><div class="row" id="ps"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll"><table id="ptable"><tr><th>Властивість</th><th>Зараз</th><th>Мета</th><th></th></tr></table></div>
+    <div class="row"><button class="btn warm" id="objChk">Перевірити</button><span class="msg" id="objMsg"></span></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="card" id="s4">
+    <p class="kicker">Етап 4 · приблизно 6 хв</p>
+    <h2>Об'єкт, властивість, значення чи дія?</h2>
+    <p class="lead">Для кожного запису обери, чим він є.</p>
+    <div class="items" id="items"></div>
+    <div class="row"><button class="btn warm" id="sortChk">Перевірити</button><span class="msg" id="sortMsg"></span></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="card" id="s5">
+    <p class="kicker">Етап 5 · приблизно 4 хв</p>
+    <h2>Підсумок уроку</h2>
+    <div class="qs" id="qs"></div>
+    <div class="row"><button class="btn warm" id="finish">Отримати результат</button><span class="msg" id="finMsg"></span></div>
+    <div id="result" hidden style="display:flex;flex-direction:column;gap:12px">
+      <p class="big" id="score"></p>
+      <div class="row"><label for="nm"><b>Ім'я та клас</b></label><input type="text" id="nm" placeholder="Ім'я, клас" maxlength="60" autocomplete="off"></div>
+      <textarea id="out" readonly aria-label="Текст результату"></textarea>
+      <div class="row"><button class="btn primary" id="copy">Копіювати результат</button><span class="msg" id="copyMsg" aria-live="polite"></span></div>
+      <p class="lead">Скопіюй текст і надішли вчителю або зроби скріншот цього екрана.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+function $(s){return document.querySelector(s);}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;}
+var COL={blue:'#1F5FC9',orange:'#F5A02A',green:'#2E9E5B',pink:'#D9468F'},COLN={blue:'синій',orange:'оранжевий',green:'зелений',pink:'рожевий'};
+var SIZE={s:.62,m:.82,l:1},SIZEN={s:'малий',m:'середній',l:'великий'},DIRN={U:'вгору',R:'праворуч',D:'вниз',L:'ліворуч'},ROT={U:0,R:90,D:180,L:270};
+var CELL=64,W=7,H=5,NS='http://www.w3.org/2000/svg';
+var mood='';
+var done={env:false,model:false,obj:false,sort:false,quiz:false};
+var sc={match:0,game:0,model:0,obj:0,sort:0,quiz:0},MAX={match:5,game:3,model:2,obj:5,sort:8,quiz:4};
+function mark(k){done[k]=true;var a=document.querySelector('#steps a[data-k="'+k+'"]');if(a)a.classList.add('done');}
+
+/* ---------- board drawing ---------- */
+function rudi(x,y,dir,color,size){
+  var cx=x*CELL+CELL/2,cy=y*CELL+CELL/2,s=SIZE[size];
+  return '<g transform="translate('+cx+' '+cy+') rotate('+ROT[dir]+') scale('+s+')">'+
+   '<line x1="0" y1="-20" x2="0" y2="-31" stroke="currentColor" stroke-width="3"/><circle cx="0" cy="-33" r="4.5" fill="#F5A02A" stroke="currentColor" stroke-width="2"/>'+
+   '<rect x="-24" y="-21" width="48" height="42" rx="11" fill="'+COL[color]+'" stroke="currentColor" stroke-width="3"/>'+
+   '<circle cx="-10" cy="-6" r="6" fill="#fff"/><circle cx="10" cy="-6" r="6" fill="#fff"/><circle cx="-10" cy="-7" r="2.6" fill="#14213D"/><circle cx="10" cy="-7" r="2.6" fill="#14213D"/>'+
+   '<path d="M-9 8 Q0 15 9 8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>';
+}
+function battery(x,y){
+  var cx=x*CELL+CELL/2,cy=y*CELL+CELL/2;
+  return '<g transform="translate('+cx+' '+cy+')"><rect x="-14" y="-9" width="26" height="18" rx="3" fill="#2E9E5B" stroke="currentColor" stroke-width="2.5"/><rect x="12" y="-4" width="4" height="8" fill="currentColor"/><path d="M-3 -5 L-7 1 H-1 L-5 6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>';
+}
+function grid(){
+  var g='',i,j;
+  for(i=0;i<W;i++)for(j=0;j<H;j++){g+='<rect x="'+i*CELL+'" y="'+j*CELL+'" width="'+CELL+'" height="'+CELL+'" fill="'+((i+j)%2?'var(--cell2)':'var(--cell)')+'"/>';}
+  for(i=0;i<W;i++)g+='<text x="'+(i*CELL+CELL/2)+'" y="12" text-anchor="middle" font-size="10" fill="var(--muted)">'+i+'</text>';
+  for(j=0;j<H;j++)g+='<text x="5" y="'+(j*CELL+CELL/2+4)+'" font-size="10" fill="var(--muted)">'+j+'</text>';
+  return g;
+}
+function draw(svg,body){svg.innerHTML='<g style="color:var(--fg)">'+grid()+body+'</g>';}
+
+/* ---------- stage 1: environment ---------- */
+var BAT=[[2,4],[2,1],[5,1]],START=[0,4];
+var g1={x:START[0],y:START[1],got:[],script:[],running:false,done:false};
+var CMD={U:['↑','вгору',0,-1],D:['↓','вниз',0,1],L:['←','ліворуч',-1,0],R:['→','праворуч',1,0]};
+function draw1(){
+  var b='';BAT.forEach(function(p,i){if(g1.got.indexOf(i)<0)b+=battery(p[0],p[1]);});
+  b+=rudi(g1.x,g1.y,'U','blue','l');draw($('#b1'),b);
+}
+function renderScript(){
+  var s=$('#scr');s.innerHTML='';
+  if(!g1.script.length){s.appendChild(el('span','lead','Натискай команди зі «Системи команд»'));}
+  g1.script.forEach(function(c){s.appendChild(el('span','chip on',CMD[c][0]+' '+CMD[c][1]));});
+}
+Object.keys(CMD).forEach(function(k){
+  var b=el('button','chip',CMD[k][0]+' '+CMD[k][1]);b.onclick=function(){if(g1.running)return;if(g1.script.length>=24){$('#g1msg').textContent='Достатньо команд: не більше 24.';return;}g1.script.push(k);renderScript();};
+  $('#pal').appendChild(b);
+});
+function reset1(){g1.x=START[0];g1.y=START[1];g1.got=[];draw1();}
+$('#undo').onclick=function(){if(g1.running)return;g1.script.pop();renderScript();};
+$('#clr').onclick=function(){if(g1.running)return;g1.script=[];renderScript();reset1();$('#g1msg').className='msg info';$('#g1msg').textContent='Збери всі 3 батарейки. Руді стартує в лівому нижньому куті.';};
+$('#run').onclick=function(){
+  if(g1.running)return;var m=$('#g1msg');
+  if(!g1.script.length){m.className='msg bad';m.textContent='Спочатку склади алгоритм із команд.';return;}
+  reset1();g1.running=true;var i=0;m.className='msg info';m.textContent='Руді виконує алгоритм…';
+  var t=setInterval(function(){
+    if(i>=g1.script.length){
+      clearInterval(t);g1.running=false;
+      if(g1.got.length===3){m.className='msg good';m.textContent='Усі батарейки зібрано, команд: '+g1.script.length+'. Алгоритм працює.';if(!g1.done){g1.done=true;sc.game=3;mark('env');}}
+      else{m.className='msg bad';m.textContent='Зібрано батарейок: '+g1.got.length+' з 3. Зміни алгоритм і запусти ще раз.';}
+      return;}
+    var c=CMD[g1.script[i]],nx=g1.x+c[2],ny=g1.y+c[3];
+    if(nx<0||ny<0||nx>=W||ny>=H){clearInterval(t);g1.running=false;m.className='msg bad';m.textContent='Помилка на кроці '+(i+1)+': виконавець не може вийти за межі поля.';return;}
+    g1.x=nx;g1.y=ny;BAT.forEach(function(p,k){if(p[0]===nx&&p[1]===ny&&g1.got.indexOf(k)<0)g1.got.push(k);});
+    draw1();i++;
+  },380);
+};
+var PARTS=[['field','Поле'],['exec','Виконавець'],['cmds','Система команд'],['area','Область запису алгоритму'],['go','Кнопка «Пуск»']];
+function hl(k){
+  $('#b1').classList.toggle('hl',k==='field'||k==='exec');
+  $('#pal').classList.toggle('hl',k==='cmds');$('#scr').classList.toggle('hl',k==='area');$('#runrow').classList.toggle('hl',k==='go');
+  Array.prototype.forEach.call($('#legend').children,function(b){b.classList.toggle('on',b.dataset.k===k);});
+  if(k==='exec'){draw($('#b1'),'');var b='';BAT.forEach(function(p,i){if(g1.got.indexOf(i)<0)b+=battery(p[0],p[1]);});draw($('#b1'),b+rudi(g1.x,g1.y,'U','blue','l')+'<circle cx="'+(g1.x*CELL+CELL/2)+'" cy="'+(g1.y*CELL+CELL/2)+'" r="34" fill="none" stroke="#F5A02A" stroke-width="4"/>');}
+  else draw1();
+}
+PARTS.forEach(function(p){var b=el('button','',p[1]);b.dataset.k=p[0];b.onclick=function(){hl(p[0]);};$('#legend').appendChild(b);});
+var MATCH=[['Тут виконавець діє і виконує команди','field'],['Той, хто виконує команди','exec'],['Набір команд, які розуміє виконавець','cmds'],['Тут із команд складають алгоритм','area'],['Запускає виконання алгоритму','go']];
+MATCH.forEach(function(m,i){
+  var r=el('div','row');r.appendChild(el('span','',m[0]+' →'));var s=el('select');s.id='m'+i;
+  s.setAttribute('aria-label',m[0]);var o=el('option','','обери…');o.value='';s.appendChild(o);
+  PARTS.forEach(function(p){var o2=el('option','',p[1]);o2.value=p[0];s.appendChild(o2);});r.appendChild(s);$('#match').appendChild(r);
+});
+$('#matchChk').onclick=function(){
+  var n=0,m=$('#matchMsg');MATCH.forEach(function(x,i){var s=$('#m'+i);var ok=s.value===x[1];if(ok)n++;s.style.borderColor=s.value?(ok?'var(--good)':'var(--bad)'):'';});
+  sc.match=n;m.className='msg '+(n===5?'good':'bad');m.textContent=n===5?'Усе вірно: 5 з 5.':'Вірно: '+n+' з 5. Червоні поля виправ.';
+};
+
+/* ---------- stage 2: models ---------- */
+var PROPS=['номер кабінету','розташування на поверсі','площа підлоги','кількість вікон','колір штор','улюблений предмет вчителя'];
+var GOALS=[
+ {t:'Схема поверху для нового учня, щоб він знайшов потрібний кабінет',need:[0,1]},
+ {t:'Картка кабінету для прибиральниці, щоб вона підрахувала час прибирання',need:[0,2,3]}];
+var pick=[[],[]];
+GOALS.forEach(function(g,gi){
+  var box=el('div','',null);box.style.cssText='display:flex;flex-direction:column;gap:8px';
+  box.appendChild(el('h3','','Мета '+(gi+1)+': '+g.t));
+  var r=el('div','row');
+  PROPS.forEach(function(p,pi){var b=el('button','chip',p);b.setAttribute('aria-pressed','false');b.id='c'+gi+'_'+pi;
+    b.onclick=function(){var k=pick[gi].indexOf(pi);if(k<0)pick[gi].push(pi);else pick[gi].splice(k,1);b.classList.toggle('on',k<0);b.classList.remove('ok','no');b.setAttribute('aria-pressed',k<0?'true':'false');};r.appendChild(b);});
+  box.appendChild(r);$('#models').appendChild(box);
+});
+$('#modelChk').onclick=function(){
+  var pts=0,m=$('#modelMsg');
+  GOALS.forEach(function(g,gi){var all=true;PROPS.forEach(function(p,pi){var b=$('#c'+gi+'_'+pi),on=pick[gi].indexOf(pi)>=0,need=g.need.indexOf(pi)>=0;b.classList.remove('ok','no');if(on&&need)b.classList.add('ok');else if(on&&!need){b.classList.add('no');all=false;}else if(!on&&need)all=false;});if(all)pts++;});
+  sc.model=pts;m.className='msg '+(pts===2?'good':'bad');
+  if(pts===2){m.textContent='Обидві моделі точні. Мета визначає, які властивості суттєві.';mark('model');}
+  else m.textContent='Моделей без помилок: '+pts+' з 2. Червоне зайве. Бракує суттєвих властивостей. Спробуй ще.';
+};
+
+/* ---------- stage 3: object ---------- */
+var T={x:4,y:2,d:'R',c:'orange',s:'l'},P={x:0,y:4,d:'U',c:'blue',s:'m'};
+(function(){var i;for(i=0;i<W;i++){var o=el('option',null,i);o.value=i;$('#px').appendChild(o);}for(i=0;i<H;i++){var o2=el('option',null,i);o2.value=i;$('#py').appendChild(o2);}
+ Object.keys(COL).forEach(function(k){var b=el('button','swatch');b.style.background=COL[k];b.setAttribute('aria-label',COLN[k]);b.dataset.k=k;b.onclick=function(){P.c=k;r3();};$('#pc').appendChild(b);});
+ Object.keys(SIZE).forEach(function(k){var b=el('button','chip',SIZEN[k]);b.dataset.k=k;b.onclick=function(){P.s=k;r3();};$('#ps').appendChild(b);});})();
+$('#px').onchange=function(){P.x=+this.value;r3();};$('#py').onchange=function(){P.y=+this.value;r3();};$('#pd').onchange=function(){P.d=this.value;r3();};
+function r3(){
+  draw($('#b3'),rudi(P.x,P.y,P.d,P.c,P.s)+'<rect x="'+(T.x*CELL+3)+'" y="'+(T.y*CELL+3)+'" width="'+(CELL-6)+'" height="'+(CELL-6)+'" rx="8" fill="none" stroke="#F5A02A" stroke-width="3" stroke-dasharray="6 5"/>');
+  $('#px').value=P.x;$('#py').value=P.y;$('#pd').value=P.d;
+  Array.prototype.forEach.call($('#pc').children,function(b){b.classList.toggle('on',b.dataset.k===P.c);});
+  Array.prototype.forEach.call($('#ps').children,function(b){b.classList.toggle('on',b.dataset.k===P.s);});
+  var rows=[['x (стовпець)',P.x,T.x],['y (рядок)',P.y,T.y],['напрям',DIRN[P.d],DIRN[T.d]],['колір',COLN[P.c],COLN[T.c]],['розмір',SIZEN[P.s],SIZEN[T.s]]],keys=['x','y','d','c','s'];
+  var t=$('#ptable');while(t.rows.length>1)t.deleteRow(1);
+  rows.forEach(function(r,i){var tr=t.insertRow();tr.insertCell().textContent=r[0];tr.insertCell().textContent=r[1];tr.insertCell().textContent=r[2];var ok=P[keys[i]]===T[keys[i]];var c=tr.insertCell();c.textContent=ok?'збігається':'';c.style.color='var(--good)';c.style.fontWeight='700';});
+}
+$('#objChk').onclick=function(){
+  var n=['x','y','d','c','s'].filter(function(k){return P[k]===T[k];}).length,m=$('#objMsg');sc.obj=n;
+  m.className='msg '+(n===5?'good':'bad');
+  if(n===5){m.textContent='Усі 5 властивостей збігаються з метою.';mark('obj');}else m.textContent='Збіглося: '+n+' з 5. Дивись на оранжеву рамку й таблицю.';
+};
+r3();
+
+/* ---------- stage 4: classify ---------- */
+var CATS=['об\'єкт','властивість','значення','дія'];
+var ITEMS=[['Робот Руді',0],['розмір',1],['великий',2],['рухатися вперед',3],['Поле',0],['напрям',1],['оранжевий',2],['повернути праворуч',3]];
+var sel=[];
+ITEMS.forEach(function(it,i){
+  var d=el('div','item');d.id='it'+i;d.appendChild(el('b','',it[0]));var r=el('div','opt4');
+  CATS.forEach(function(c,ci){var b=el('button','chip sm',c);b.onclick=function(){sel[i]=ci;Array.prototype.forEach.call(r.children,function(x,xi){x.classList.toggle('on',xi===ci);});d.classList.remove('ok','no');};r.appendChild(b);});
+  d.appendChild(r);$('#items').appendChild(d);
+});
+$('#sortChk').onclick=function(){
+  var n=0,m=$('#sortMsg');ITEMS.forEach(function(it,i){var d=$('#it'+i),ok=sel[i]===it[1];if(ok)n++;d.classList.remove('ok','no');if(sel[i]!=null)d.classList.add(ok?'ok':'no');});
+  sc.sort=n;m.className='msg '+(n===8?'good':'bad');m.textContent=n===8?'Усе вірно: 8 з 8.':'Вірно: '+n+' з 8. Червоні картки виправ.';if(n===8)mark('sort');
+};
+
+/* ---------- stage 5: quiz ---------- */
+var QZ=[
+ ['Що таке середовище виконання алгоритмів?',['Місце, де виконавець діє, разом із тим, що потрібно для запису й запуску алгоритму','Тільки кнопка «Пуск»','Будь-який комп\'ютер у класі'],0],
+ ['Модель — це…',['Точна копія предмета з усіма властивостями','Спрощений образ, де є лише суттєві для мети властивості','Малюнок, який можна лише розфарбувати'],1],
+ ['У записі «колір = оранжевий» слово «колір» — це…',['значення властивості','назва властивості','об\'єкт'],1],
+ ['Яку властивість Руді змінить команда «повернути праворуч»?',['колір','розмір','напрям'],2]];
+var ans=[];
+QZ.forEach(function(q,qi){
+  var d=el('div','q');d.appendChild(el('b','',(qi+1)+'. '+q[0]));var o=el('div','opts');
+  q[1].forEach(function(t,ti){var b=el('button','',t);b.onclick=function(){ans[qi]=ti;Array.prototype.forEach.call(o.children,function(x,xi){x.className=xi===ti?'pick':'';});};o.appendChild(b);});
+  d.appendChild(o);$('#qs').appendChild(d);
+});
+function summary(){
+  var tot=0,mx=0,k;for(k in sc){tot+=sc[k];mx+=MAX[k];}
+  var nm=$('#nm').value.trim()||'—';
+  return {tot:tot,mx:mx,text:['Урок: Середовище виконання алгоритмів. Моделі та об\'єкти','Учень, клас: '+nm,'Дата: '+new Date().toLocaleDateString('uk-UA'),'Настрій на початку уроку: '+(mood||'—'),
+   '1. Частини середовища: '+sc.match+' з '+MAX.match,'1. Алгоритм для Руді (збір батарейок): '+sc.game+' з '+MAX.game+(g1.done?', команд: '+g1.script.length:''),
+   '2. Моделі та мета: '+sc.model+' з '+MAX.model,'3. Властивості об\'єкта: '+sc.obj+' з '+MAX.obj,'4. Об\'єкт, властивість, значення, дія: '+sc.sort+' з '+MAX.sort,'5. Запитання: '+sc.quiz+' з '+MAX.quiz,'Разом: '+tot+' з '+mx].join('\n')};
+}
+function showResult(){var s=summary();$('#score').textContent=s.tot+' з '+s.mx+' балів';$('#out').value=s.text;}
+$('#finish').onclick=function(){
+  var m=$('#finMsg'),n=0,i;
+  for(i=0;i<QZ.length;i++){if(ans[i]==null){m.className='msg bad';m.textContent='Дай відповідь на всі 4 запитання.';return;}}
+  Array.prototype.forEach.call($('#qs').children,function(d,qi){var bs=d.querySelector('.opts').children;Array.prototype.forEach.call(bs,function(b,bi){b.className=bi===QZ[qi][2]?'ok':(bi===ans[qi]?'no':'');});if(ans[qi]===QZ[qi][2])n++;});
+  sc.quiz=n;mark('quiz');m.className='msg good';m.textContent='Правильних відповідей: '+n+' з 4.';
+  $('#result').hidden=false;showResult();$('#result').scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+$('#nm').oninput=showResult;
+$('#copy').onclick=function(){
+  var t=$('#out'),m=$('#copyMsg');t.focus();t.select();
+  function ok(){m.className='msg good';m.textContent='Скопійовано. Встав текст у повідомлення вчителю.';}
+  function fail(){m.className='msg bad';m.textContent='Не вдалося скопіювати автоматично. Текст виділено: натисни Ctrl+C.';}
+  function old(){try{document.execCommand('copy')?ok():fail();}catch(e){fail();}}
+  try{navigator.clipboard.writeText(t.value).then(ok,old);}catch(e){old();}
+};
+
+/* ---------- warm-up: mood ---------- */
+var MOODS=[['радий','Ура! Тоді сьогодні працюємо весело й швидко.'],['спокійний','Чудово. Спокійна голова добре складає алгоритми.'],['втомлений','Зрозуміло. Працюй у своєму темпі, а я підкажу, якщо що.'],['здивований','Сьогодні буде багато нового. Ходімо дивитись!'],['сумний','Дякую, що сказав. Разом з Руді буде трохи легше.'],['сердитий','Іноді так буває. Спробуй видихнути й почнемо.']];
+function face(m){
+  var eyes='<circle cx="-12" cy="-4" r="7" fill="#fff"/><circle cx="12" cy="-4" r="7" fill="#fff"/><circle cx="-12" cy="-4" r="3" fill="#14213D"/><circle cx="12" cy="-4" r="3" fill="#14213D"/>',mouth='',brow='',st='fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"';
+  if(m==='радий')mouth='<path d="M-14 8 Q0 24 14 8 Z" fill="#fff"/>';
+  if(m==='спокійний')mouth='<path d="M-9 12 H9" '+st+'/>';
+  if(m==='втомлений'){eyes='<path d="M-19 -4 Q-12 3 -5 -4" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M5 -4 Q12 3 19 -4" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>';mouth='<path d="M-9 13 Q-3 9 0 13 Q3 17 9 13" '+st+'/>';}
+  if(m==='здивований'){eyes='<circle cx="-12" cy="-4" r="9" fill="#fff"/><circle cx="12" cy="-4" r="9" fill="#fff"/><circle cx="-12" cy="-4" r="2.6" fill="#14213D"/><circle cx="12" cy="-4" r="2.6" fill="#14213D"/>';mouth='<ellipse cx="0" cy="14" rx="5" ry="7" fill="#fff"/>';}
+  if(m==='сумний'){mouth='<path d="M-10 16 Q0 7 10 16" '+st+'/>';brow='<path d="M-20 -14 L-6 -18 M20 -14 L6 -18" '+st+'/>';}
+  if(m==='сердитий'){mouth='<path d="M-10 16 Q0 8 10 16" '+st+'/>';brow='<path d="M-21 -19 L-6 -13 M21 -19 L6 -13" '+st+'/>';}
+  return '<svg viewBox="-45 -52 90 92" aria-hidden="true" style="color:var(--fg)"><line x1="0" y1="-26" x2="0" y2="-38" stroke="currentColor" stroke-width="3"/><circle cx="0" cy="-41" r="5" fill="#F5A02A" stroke="currentColor" stroke-width="2"/><rect x="-32" y="-27" width="64" height="58" rx="15" fill="#1F5FC9" stroke="currentColor" stroke-width="3"/>'+eyes+brow+mouth+'</svg>';
+}
+MOODS.forEach(function(m){
+  var b=el('button','mood');b.innerHTML=face(m[0]);b.appendChild(el('span','',m[0]));b.setAttribute('aria-label','Настрій: '+m[0]);
+  b.onclick=function(){mood=m[0];Array.prototype.forEach.call($('#moods').children,function(x){x.classList.toggle('on',x===b);});$('#moodMsg').textContent='Руді: «'+m[1]+'»';};
+  $('#moods').appendChild(b);
+});
+
+draw1();renderScript();
+})();
+</script>
+
+</body></html>
